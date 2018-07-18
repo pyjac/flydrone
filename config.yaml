@@ -1,0 +1,5 @@
+drones:
+  - id:  "A1"
+    type:  "fast_drone"
+  - id:  "B1"
+    type:  "slow_drone"
