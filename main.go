@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"flydrone/bootstrap"
 	"io/ioutil"
 	"os"
@@ -17,5 +16,6 @@ func main() {
 	reader, _ := os.Open("config.yaml")
 	buf, _ := ioutil.ReadAll(reader)
 	yaml.Unmarshal(buf, &conf)
-	fmt.Printf("%v+", buf)
+	bootstrap.Run(conf.Drones)
+	select {} // block forever
 }
