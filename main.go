@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "flydrone/drone"
 	"flydrone/bootstrap"
 	"io/ioutil"
 	"os"
