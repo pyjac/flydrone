@@ -9,6 +9,13 @@ type DroneConfig struct {
 	Type    string
 }
 
+type Drone interface {
+	Move()
+	X() uint32
+	Y() uint32
+	GetSpeed() uint32
+	Id() string
+}
 
 func Run(dcs []DroneConfig){
 	for _, dc := range dcs {
