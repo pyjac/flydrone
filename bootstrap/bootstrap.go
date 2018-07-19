@@ -17,8 +17,22 @@ type Drone interface {
 	Id() string
 }
 
+type droneFactory func(droneId string) Drone
+
+var dronesFactories = make(map[string]droneFactory)
+
 func Run(dcs []DroneConfig){
 	for _, dc := range dcs {
 		log.Printf("%+v\n", dc)
 	}
-} 
+}
+
+func Register(droneType string, df droneFactory) {
+	if _, exists := dronesFactories[droneType]; exists {
+		log.Println(droneType, "Drone Factory already registered")
+		return
+	}
+
+	log.Println("Register", droneType, "drone")
+	dronesFactories[droneType] = df
+}
