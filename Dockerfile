@@ -9,7 +9,10 @@ COPY Gopkg.toml Gopkg.lock ./
 
 RUN go get github.com/golang/dep/cmd/dep
 RUN dep ensure --vendor-only
-
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
 
-CMD ["go", "run", "main.go"]
+FROM scratch
+COPY --from=0 /go/src/flydrone/main .
+ENTRYPOINT ["/main"]
+
