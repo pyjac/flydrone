@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/go/src/flydrone
+    links:
+      - "mosquitto" 
+    command: go run main.go
+  web:
+    build: ./frontend
+    command: npm start
+    volumes:
+      - ./frontend:/usr/app/
+      - /usr/app/node_modules
+    links:
+      - "mosquitto"
+    ports:
+      - "3001:3000"
+    environment:
+      REACT_APP_SOCKET_URL: ws://127.0.0.1:3002
+  mosquitto:
+    image: eclipse-mosquitto
+    restart: always
+    ports:
+      - "3002:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf

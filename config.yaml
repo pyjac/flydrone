@@ -1,4 +1,4 @@
-websocket: "ws://127.0.0.1:1883"
+websocket: "ws://mosquitto:1883"
 drones:
   - id:  "A1"
     type:  "fast_drone"
