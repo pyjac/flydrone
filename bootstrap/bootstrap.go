@@ -40,11 +40,14 @@ type droneMoveMessage struct {
 	Speed uint32 `json:"s"`
 }
 
-
 type droneFactory func(droneId string) Drone
 
 var dronesFactories = make(map[string]droneFactory)
 
+var socketClientOptions = MQTT.NewClientOptions()
+var socketClient = MQTT.NewClient
+
+// Run : This bootstrap the whole process and starts all the drones in config
 func Run(dcs DroneConfig){
 	for _, dc := range dcs.Drones {
 		droneFactory, exists := dronesFactories[dc.Type]
@@ -58,6 +61,7 @@ func Run(dcs DroneConfig){
 			log.Printf("Cannot create socket for Drone")
 			continue
 		}
+		// This enables individual drones to respond with location every second
 		go func(d Drone, client MQTT.Client){
 			ticker := time.NewTicker(1 * time.Second)
 			for ; true; <-ticker.C {
@@ -77,22 +81,23 @@ func Run(dcs DroneConfig){
 	}
 } 
 
-func Register(droneType string, df droneFactory) {
+// Register : All drones needs to be registered before they can be created
+// This is called in each drone's init method
+func Register(droneType string, df droneFactory) error {
 	if _, exists := dronesFactories[droneType]; exists {
-		log.Println(droneType, "Drone Factory already registered")
-		return
+		return fmt.Errorf("%s Drone Factory already registered", droneType)
 	}
-
 	log.Println("Register", droneType, "drone")
 	dronesFactories[droneType] = df
+	return nil
 }
 
 func newDroneMqttWebSocketClient(websocketPath string, droneID string) (MQTT.Client, error) {
-	connOpts := MQTT.NewClientOptions().AddBroker(websocketPath).SetClientID(droneID).SetCleanSession(true)
+	connOpts := socketClientOptions.AddBroker(websocketPath).SetClientID(droneID).SetCleanSession(true)
 	tlsConfig := &tls.Config{InsecureSkipVerify: true, ClientAuth: tls.NoClientCert}
 	connOpts.SetTLSConfig(tlsConfig)
  
-	client := MQTT.NewClient(connOpts)
+	client := socketClient(connOpts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		return nil, token.Error()
