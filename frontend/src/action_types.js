@@ -1,2 +1,2 @@
-export const DRONES_LIST = 'DRONES_LIST'
 export const DRONE_MOVE = 'DRONE_MOVE'
+export const MARK_DRONE_INACTIVE = 'MARK_DRONE_INACTIVE'

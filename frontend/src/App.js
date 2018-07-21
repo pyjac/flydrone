@@ -4,6 +4,7 @@ import "./App.css";
 
 class App extends Component {
   render() {
+    console.log(this.props.drones)
     return (
       <div className="container">
         {this.props.drones.length > 0 && <h1 className="header">Drones</h1>}
@@ -14,6 +15,7 @@ class App extends Component {
             <label>X: {d.x}</label>
             <label>Y: {d.y}</label>
             <label>Speed: {d.s}</label>
+            <label>Active: {d.active ? "true" : "false"}</label>
           </div>
         )}
         </div>
